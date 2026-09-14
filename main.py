@@ -45,12 +45,13 @@ def fake_ip():
     return f"{223}.{random.randint(64, 117)}.{random.randint(0, 255)}.{random.randint(0, 255)}"
 
 
-# 账号脱敏
+# 账号脱敏：日志会进入公开的 Actions 记录，仅保留首2尾2，避免手机号可被反查
 def desensitize_user_name(user):
-    if len(user) <= 8:
-        ln = max(math.floor(len(user) / 3), 1)
-        return f'{user[:ln]}***{user[-ln:]}'
-    return f'{user[:3]}****{user[-4:]}'
+    if not user:
+        return ''
+    if len(user) <= 6:
+        return user[0] + '****'
+    return f'{user[:2]}****{user[-2:]}'
 
 
 # 获取北京时间

@@ -42,7 +42,7 @@ def push_plus(token, title, content):
     :param content: 推送内容
     :return: none
     """
-    requestUrl = f"http://www.pushplus.plus/send"
+    requestUrl = "https://www.pushplus.plus/send"
     data = {
         "token": token,
         "title": title,

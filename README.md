@@ -8,7 +8,12 @@
 ## 小米运动自动刷步数（支持邮箱登录）
 
 - 小米运动自动刷步数，小米运动APP现已改名 `Zepp Life`，为方便说明，后面还是称其为小米运动。但下载注册时请搜索 `Zepp Life`。
-- 注册账号后建议先去以下网站测试自己的账号刷步数是否正常（注意这些网站只是网络上收集的，不保证安全和有效性）：
+- ⚠️ 安全提示：下方第三方测试网站会获得你输入的账号密码明文，存在凭据泄露风险。更安全的验证方式是本地运行本仓库脚本（凭据仅发往 Zepp 官方接口）：
+  ```shell
+  cp .env.example .env  # 填入账号密码后执行
+  python3 main.py
+  ```
+- 如仍需使用第三方网站测试（风险自担）：
     - https://steps.hubp.de/ 提示密码错误时可以多试几次 或者切换网络
     - https://bs.yanwan.store/run4/ 验证码001或998
 - 如无法刷步数同步到支付宝等，建议重新注册一个新的。
@@ -16,6 +21,7 @@
 ## 新注册账号使用方法
 
 由于新注册账号没有绑定过手环，会导致华米拦截向微信同步步数，此时你需要做的就是绑定一次小米1-7代任意手环即可。如果没有可以参考以下步骤：
+- ⚠️ 此步骤需向第三方网站提交账号密码，存在凭据泄露风险，请知悉后自行决定
 - 前往 `https://bs.yanwan.store/run4/` 网站执行一次步数同步
 - 该网站会自动为你账号绑定一个虚拟设备（感谢该建站大佬）
 - 你可以在你 Zepp Life 中看到这个虚拟的设备
@@ -181,16 +187,13 @@
 
 ### 八、忘记配置后的处理
 
-- 当长时间没有使用或者忘记了配置，可以通过手动触发工作流来发送配置信息到企业微信通知中，或者telegram机器人，请务必配置在私有的企业微信或telegram群组中，避免密码等敏感信息泄露给别人
-- 步骤：
-  - 首先配置Secrets：`INSPECT_WECHAT_HOOK_KEY` 配置企业微信机器人的key，具体请参考企业微信机器人文档。
-  - telegram配置Secrets：`INSPECT_TELEGRAM_BOT_TOKEN`和`INSPECT_TELEGRAM_CHAT_ID` 配置机器人的token和聊天chatId，具体请参考TelegramBot文档。
-  - 然后点击Actions，左侧选择 `提取配置信息` 手动运行它，运行成功后，将配置信息发送到企业微信或telegram中。企业微信或者telegram的推送自己按需选择，如果都不配置，请使用日志打印的方式。
-- 如果没有企业微信或telegram，可以配置Secrets: `INSPECT_AES_KEY` 注意是16位的字符串，请勿使用弱密码，避免被人猜到。
-  - 在Secrets中配置后，运行上述的Actions，然后在执行结果中查看日志打印的base64字符串。
-  - 提取base64字符串后，可以使用在线AES加解密网站进行解密，加密方式为CBC，填充方式为PKCS7，密钥长度128bit，密钥和偏移量（iv）均为INSPECT_AES_KEY
-  - 可用网站：https://www.toolhelper.cn/SymmetricEncryption/AES
-- 以上两种方式都可以提取 CONFIG，PAT，AES_KEY 三个Secrets配置，请自行选择。
+
+> **本 Fork 已移除原版的「提取配置信息」工作流**（inspect_configs）：该功能会把 CONFIG（含密码）、PAT、AES_KEY 明文推送到 webhook，或要求把密文和密钥交给第三方在线解密网站，均存在泄露风险，已从代码库中删除。
+
+Secrets 是密文存储、保存后无法查看，属正常设计。忘记配置内容时直接重新填写即可，成本几乎为零：
+
+1. 在本地（密码管理器）保存一份 CONFIG 内容
+2. 前往 Settings --> Secrets and variables --> Actions，用 `Update secret` 直接覆盖 CONFIG / AES_KEY / PAT
 
 ## 注意事项
 

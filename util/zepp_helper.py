@@ -150,8 +150,7 @@ def grant_app_token(login_token: str) -> (str | None, str | None):
     if resp.status_code != 200:
         return None, "请求异常：%d" % resp.status_code
     resp = resp.json()
-    print("grant_app_token: %s" % json.dumps(resp))
-
+    # 不打印响应内容：其中包含 app_token，会泄露进公开的 Actions 日志
     result = resp.get("result")
     if result != "ok":
         error_code = resp.get("error_code")
